@@ -6,7 +6,7 @@ from shared_memory_dict import SharedMemoryDict
 class TestSharedMemoryDict:
     @pytest.fixture
     def shared_memory_dict(self):
-        smd = SharedMemoryDict(name='unit-tests', size=64)
+        smd = SharedMemoryDict(name='ut', size=1024)
         yield smd
         smd.clear()
         smd.cleanup()
