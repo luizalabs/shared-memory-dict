@@ -1,1 +1,1 @@
-MEMORY_NAME = 'tmp/smc_{name}'
+MEMORY_NAME = 'sm_{name}'
