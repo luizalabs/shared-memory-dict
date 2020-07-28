@@ -8,7 +8,7 @@ class TestDjangoSharedMemoryCache:
 
     @pytest.fixture
     def backend(self):
-        cache = SharedMemoryCache(name='smc', params={})
+        cache = SharedMemoryCache(name='ut', params={})
         yield cache
         cache.clear()
 

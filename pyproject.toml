@@ -7,6 +7,7 @@ authors = ["Arquitetura LuizaLabs <arquitetura@luizalabs.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 django = { version = "^3.0.8", optional = true}
+aiocache = { version = "^0.11.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -21,6 +22,7 @@ pytest-asyncio = "^0.14.0"
 [tool.poetry.extras]
 django = ["django"]
 aiocache = ["aiocache"]
+all = ["django", "aiocache"]
 
 [build-system]
 requires = ["poetry>=0.12"]
