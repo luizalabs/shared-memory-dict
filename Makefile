@@ -1,14 +1,17 @@
 install:
 	@poetry install
 
+install-dev:
+	@poetry install --extras "all"
+
 test:
-	@pytest
+	@poetry run pytest
 
 lint:
-	@flake8 shared_memory_dict
-	@isort --check shared_memory_dict
-	@black --skip-string-normalization --line-length 79 --check shared_memory_dict
-	@mypy shared_memory_dict
+	@poetry run flake8 shared_memory_dict
+	@poetry run isort --check shared_memory_dict
+	@poetry run black --skip-string-normalization --line-length 79 --check shared_memory_dict
+	@poetry run mypy shared_memory_dict
 
 coverage:
-	@pytest --cov shared_memory_dict/ --cov-report=term-missing --cov-report=xml
+	@poetry run pytest --cov shared_memory_dict/ --cov-report=term-missing --cov-report=xml
