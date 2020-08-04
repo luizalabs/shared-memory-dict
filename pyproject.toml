@@ -3,6 +3,19 @@ name = "shared-memory-dict"
 version = "0.0.0"
 description = "A very simple shared memory dict implementation"
 authors = ["Arquitetura LuizaLabs <arquitetura@luizalabs.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/luizalabs/shared-memory-dict"
+repository = "https://github.com/luizalabs/shared-memory-dict"
+keywords = ["django", "aiocache", "shared memory"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
