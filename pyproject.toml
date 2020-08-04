@@ -24,10 +24,6 @@ django = ["django"]
 aiocache = ["aiocache"]
 all = ["django", "aiocache"]
 
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
-
 [tool.isort]
 known_first_party = "shared_memory_dict"
 atomic = true
@@ -39,3 +35,7 @@ force_grid_wrap = 0
 
 [tool.coverage.run]
 omit = ["*/*/tests/*", "*/*/settings/*"]
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
