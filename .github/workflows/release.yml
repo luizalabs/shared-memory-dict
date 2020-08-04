@@ -1,0 +1,30 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8.5
+
+      - name: Install Poetry
+        uses: dschep/install-poetry-action@v1.2
+
+      - name: build
+        run: poetry build
+
+      - name: publish
+        run: poetry publish -n -u "$USERNAME" -p "$PASSWORD"
+        env:
+          USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PASSWORD: ${{ secrets.PYPI_PASSWORD }}
