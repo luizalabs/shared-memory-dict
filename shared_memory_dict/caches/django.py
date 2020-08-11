@@ -20,9 +20,7 @@ class SharedMemoryCache(BaseCache):
         options = params.get('OPTIONS', {})
         self._cache = _caches.get(
             name,
-            SharedMemoryDict(
-                f'c_{name}', options.get('MEMORY_BLOCK_SIZE', 1024)
-            ),
+            SharedMemoryDict(name, options.get('MEMORY_BLOCK_SIZE', 1024)),
         )
 
     def add(

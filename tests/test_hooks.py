@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from shared_memory_dict.hooks import create_shared_memmory, free_shared_memory
+from shared_memory_dict.hooks import create_shared_memory, free_shared_memory
 from shared_memory_dict.templates import MEMORY_NAME
 
 
@@ -11,7 +11,7 @@ class TestHooks:
         expected_size = 64
 
         with patch('shared_memory_dict.hooks.SharedMemory') as mock:
-            create_shared_memmory(expected_name, expected_size)
+            create_shared_memory(expected_name, expected_size)
 
         mock.assert_called_once_with(
             MEMORY_NAME.format(name=expected_name),
