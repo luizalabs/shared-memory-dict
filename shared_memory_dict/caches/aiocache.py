@@ -27,7 +27,7 @@ class SharedMemoryCache(BaseCache):
     ):
         super().__init__(**kwargs)
         self.serializer = serializer or NullSerializer()
-        self._cache = SharedMemoryDict(f'c_{name}', size)
+        self._cache = SharedMemoryDict(name, size)
         self._handlers: Dict[str, TimerHandle] = {}
 
     @classmethod
