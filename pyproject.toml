@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shared-memory-dict"
-version = "0.1.1"
+version = "0.2.0"
 description = "A very simple shared memory dict implementation"
 authors = ["Arquitetura LuizaLabs <arquitetura@luizalabs.com>"]
 license = "MIT"
