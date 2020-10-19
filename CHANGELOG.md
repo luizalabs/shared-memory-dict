@@ -1,6 +1,10 @@
 Changelog
 =========
 
+[NEXT_RELEASE]
+------------------
+- Using lock on method `SharedMemoryDict.clear()`
+
 0.1.1 (2020-08-12)
 ------------------
 - Fix typo on hooks
