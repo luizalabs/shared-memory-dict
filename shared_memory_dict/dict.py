@@ -22,9 +22,9 @@ class SharedMemoryDict(OrderedDict):
         with self._modify_db() as db:
             db.move_to_end(key, last=last)
 
+    @lock
     def clear(self) -> None:
-        with self._modify_db() as db:
-            db.clear()
+        self._save_memory(OrderedDict())
 
     def popitem(self, last: Optional[bool] = True) -> Any:
         with self._modify_db() as db:
