@@ -1,7 +1,7 @@
 Changelog
 =========
 
-[NEXT_RELEASE]
+0.2.0 (2020-10-19)
 ------------------
 - Using lock on method `SharedMemoryDict.clear()`
 
