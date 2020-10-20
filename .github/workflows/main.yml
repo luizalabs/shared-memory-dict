@@ -39,5 +39,8 @@ jobs:
       - name: Lints
         run: make lint
 
+      - name: Unit Tests With Locks
+        run: SHARED_MEMORY_USE_LOCK=1 make test
+
       - name: Unit Tests
         run: make test
