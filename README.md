@@ -20,7 +20,7 @@ pip install shared-memory-dict
 ```
 
 ## Locks
-To use [uwsgidecorators.lock](https://uwsgi-docs.readthedocs.io/en/latest/PythonDecorators.html#uwsgidecorators.lock) on write operations of shared memory dict set environment variable `SHARED_MEMORY_USE_UWSGI_LOCK`.
+To use [multiprocessing.Lock](https://docs.python.org/3.8/library/multiprocessing.html#multiprocessing.Lock) on write operations of shared memory dict set environment variable `SHARED_MEMORY_USE_LOCK=1`.
 
 ## Django Cache Implementation
 There's a [Django Cache Implementation](https://docs.djangoproject.com/en/3.0/topics/cache/) with Shared Memory Dict:
