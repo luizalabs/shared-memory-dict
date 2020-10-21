@@ -1,7 +1,7 @@
 Changelog
 =========
 
-[NEXT_RELASE]
+0.3.0 (2020-10-21)
 ------------------
 - Remove uwsgi lock and use `multiprocessing.Lock` instead
 
