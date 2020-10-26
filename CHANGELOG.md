@@ -1,6 +1,10 @@
 Changelog
 =========
 
+[NEXT_RELEASE]
+------------------
+- Prevent `KeyError` and `IndexError` on checking expire of Django cache adapter
+
 0.3.0 (2020-10-21)
 ------------------
 - Remove uwsgi lock and use `multiprocessing.Lock` instead

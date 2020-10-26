@@ -95,7 +95,10 @@ class SharedMemoryCache(BaseCache):
         self._cache.clear()
 
     def _has_expired(self, key: str) -> bool:
-        exp = self._cache.get(key, (None, -1))[1]
+        value = self._cache.get(key, (None, -1))
+        if not isinstance(value, tuple) or len(value) != 2:
+            value = (None, -1)
+        exp = value[1]
         return exp is not None and exp <= time()
 
     def _set(
