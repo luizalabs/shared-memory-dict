@@ -90,3 +90,11 @@ class TestDjangoSharedMemoryCache:
         assert backend.get('key-2') == 2
         assert backend.get('key-1') is None
         assert backend.get('key-0') is None
+
+    @pytest.mark.parametrize('value', ('fake', ('fake',), {}))
+    def test_should_prevent_key_error_for_invalid_exp_info(
+        self, backend, key, value
+    ):
+        formated_key = backend.make_key(key, version=None)
+        backend._cache[formated_key] = value
+        assert backend.get(key) is None
