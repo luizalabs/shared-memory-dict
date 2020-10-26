@@ -1,7 +1,7 @@
 Changelog
 =========
 
-[NEXT_RELEASE]
+0.3.1 (2020-10-26)
 ------------------
 - Prevent `KeyError` and `IndexError` on checking expire of Django cache adapter
 
