@@ -32,7 +32,7 @@ class TestDjangoSharedMemoryCache:
         assert backend.add(key, value) is False
 
     @pytest.mark.parametrize('value', (
-        'string', 1, {'some': 'dict'}, ['some', 'list']
+        'string', 1, 0.300, {'some': 'dict'}, ['some', 'list']
     ))
     def test_should_set_and_get_value(self, backend, value):
         key = 'some-key'
@@ -42,6 +42,17 @@ class TestDjangoSharedMemoryCache:
             pytest.fail(f'Its should not raises: {e}')
 
         assert backend.get(key) == value
+
+    def test_should_set_and_get_value_with_timeout(self, backend, value):
+        key = 'some-key'
+        value = 2
+        try:
+            backend.set(key, value, 2)
+        except Exception as e:
+            pytest.fail(f'Its should not raises: {e}')
+
+        assert backend.get(key) == value
+
 
     def test_get_a_non_exists_key_with_default_value(self, backend):
         expected_value = 'some-random-value'
@@ -98,3 +109,8 @@ class TestDjangoSharedMemoryCache:
         formated_key = backend.make_key(key, version=None)
         backend._cache[formated_key] = value
         assert backend.get(key) is None
+
+    def test_should_raise_error_for_non_int_values_on_incr(self, backend, key):
+        backend.set(key, 'a')
+        with pytest.raises(TypeError):
+            backend.incr(key)

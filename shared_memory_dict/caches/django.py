@@ -1,5 +1,5 @@
 from time import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from django.core.cache.backends.base import DEFAULT_TIMEOUT, BaseCache
 
@@ -31,12 +31,9 @@ class SharedMemoryCache(BaseCache):
         version: Optional[int] = None,
     ):
         key = self.make_key(key, version=version)
-        self.validate_key(key)
-
-        if self._has_expired(key):
+        if self._get(key) is None:
             self._set(key, value, timeout)
             return True
-
         return False
 
     def get(
@@ -46,16 +43,13 @@ class SharedMemoryCache(BaseCache):
         version: Optional[int] = None,
     ):
         key = self.make_key(key, version=version)
-        self.validate_key(key)
 
-        if self._has_expired(key):
-            self._delete(key)
+        data = self._get(key)
+        if data is None:
             return default
 
-        value, _ = self._cache[key]
         self._cache.move_to_end(key, last=False)
-
-        return value
+        return data[0]
 
     def set(
         self,
@@ -65,41 +59,49 @@ class SharedMemoryCache(BaseCache):
         version: Optional[int] = None,
     ):
         key = self.make_key(key, version=version)
-        self.validate_key(key)
         self._set(key, value, timeout)
 
     def incr(
         self, key: str, delta: Optional[int] = 1, version: Optional[int] = None
     ):
         key = self.make_key(key, version=version)
-        self.validate_key(key)
 
-        if self._has_expired(key):
-            self._delete(key)
+        data = self._get(key)
+        if data is None:
             raise ValueError(f'Key "{key}" not found')
 
-        value, expire_info = self._cache[key]
+        value, exp = data
+        if not isinstance(value, int):
+            raise TypeError(f'Expected an integer value but has: {value}')
+
+        delta = delta or 1
         new_value = value + delta
 
-        self._cache[key] = (new_value, expire_info)
+        self._cache[key] = (new_value, exp)
         self._cache.move_to_end(key, last=False)
 
         return new_value
 
     def delete(self, key: str, version: Optional[int] = None) -> None:
         key = self.make_key(key, version=version)
-        self.validate_key(key)
         return self._delete(key)
 
     def clear(self):
         self._cache.clear()
 
-    def _has_expired(self, key: str) -> bool:
-        value = self._cache.get(key, (None, -1))
-        if not isinstance(value, tuple) or len(value) != 2:
-            value = (None, -1)
-        exp = value[1]
-        return exp is not None and exp <= time()
+    def _get(self, key: str) -> Optional[Tuple[Any, float]]:
+        """
+        This method will return a tuple with (value, expiration time)
+        or will return None if key has expired
+        """
+        data = self._cache.get(key, (None, -1.0))
+        if not isinstance(data, tuple) or len(data) != 2:
+            data = (None, -1.0)
+        value, exp = data
+        if exp is not None and exp <= time():
+            self._delete(key)
+            return None
+        return (value, exp)
 
     def _set(
         self, key: str, value: Any, timeout: Optional[int] = DEFAULT_TIMEOUT
