@@ -48,7 +48,6 @@ class SharedMemoryCache(BaseCache):
         if data is None:
             return default
 
-        self._cache.move_to_end(key, last=False)
         return data[0]
 
     def set(
@@ -78,8 +77,6 @@ class SharedMemoryCache(BaseCache):
         new_value = value + delta
 
         self._cache[key] = (new_value, exp)
-        self._cache.move_to_end(key, last=False)
-
         return new_value
 
     def delete(self, key: str, version: Optional[int] = None) -> None:
@@ -106,21 +103,10 @@ class SharedMemoryCache(BaseCache):
     def _set(
         self, key: str, value: Any, timeout: Optional[int] = DEFAULT_TIMEOUT
     ):
-        if len(self._cache) >= self._max_entries:
-            self._cull()
         self._cache[key] = (value, self.get_backend_timeout(timeout))
-        self._cache.move_to_end(key, last=False)
 
     def _delete(self, key: str) -> None:
         try:
             del self._cache[key]
         except KeyError:
             pass
-
-    def _cull(self) -> None:
-        if self._cull_frequency == 0:
-            self._cache.clear()
-        else:
-            count = len(self._cache) // self._cull_frequency
-            for _ in range(count):
-                self._cache.popitem()

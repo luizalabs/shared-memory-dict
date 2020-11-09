@@ -36,9 +36,10 @@ CACHES = {
 }
 ```
 
-> This implementation is very based on django [LocMemCache](https://docs.djangoproject.com/en/3.0/topics/cache/#local-memory-caching)
-
 **Install with**: `pip install "shared-memory-dict[django]"`
+
+### Caveat
+With Django cache implementation the keys only expire when they're read. Be careful with memory usage
 
 
 ## AioCache Backend
