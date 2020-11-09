@@ -1,7 +1,7 @@
 Changelog
 =========
 
-[NEXT_RELEASE]
+0.4.0 (2020-11-09)
 ------------------
 - Remove method `validate_key` from Django adapter (this is a method to deal with memcached key name issues)
 - Decrease shared-memory and pickle calls on Django Adapter
