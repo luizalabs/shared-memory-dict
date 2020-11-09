@@ -6,6 +6,7 @@ Changelog
 - Remove method `validate_key` from Django adapter (this is a method to deal with memcached key name issues)
 - Decrease shared-memory and pickle calls on Django Adapter
 - Raise `TypeError` on `incr` method of Django Adapter for non int values
+- Remover `cull` mechanism from django adapter
 
 0.3.1 (2020-10-26)
 ------------------

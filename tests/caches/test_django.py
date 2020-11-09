@@ -78,30 +78,6 @@ class TestDjangoSharedMemoryCache:
             pytest.fail(f'Its should not raises: {e}')
         assert backend.get(key) is None
 
-    def test_should_cull_cache_with_frequency(self):
-        backend = SharedMemoryCache(
-            name='smc',
-            params={'OPTIONS': {'MAX_ENTRIES': 2, 'CULL_FREQUENCY': 2}}
-        )
-        for i in range(3):
-            backend.set(f'key-{i}', i)
-
-        assert backend.get('key-2') == 2
-        assert backend.get('key-1') == 1
-        assert backend.get('key-0') is None
-
-    def test_should_cull_cache_without_frequency(self):
-        backend = SharedMemoryCache(
-            name='smc',
-            params={'OPTIONS': {'MAX_ENTRIES': 2, 'CULL_FREQUENCY': 0}}
-        )
-        for i in range(3):
-            backend.set(f'key-{i}', i)
-
-        assert backend.get('key-2') == 2
-        assert backend.get('key-1') is None
-        assert backend.get('key-0') is None
-
     @pytest.mark.parametrize('value', ('fake', ('fake',), {}))
     def test_should_prevent_key_error_for_invalid_exp_info(
         self, backend, key, value
