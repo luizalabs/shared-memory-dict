@@ -17,6 +17,7 @@ class SharedMemoryDict(OrderedDict):
 
     def cleanup(self) -> None:
         self._memory_block.close()
+        self._memory_block.unlink()
 
     def move_to_end(self, key: str, last: Optional[bool] = True) -> None:
         with self._modify_db() as db:
