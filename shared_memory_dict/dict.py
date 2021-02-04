@@ -2,7 +2,7 @@ import pickle
 from collections import OrderedDict
 from contextlib import contextmanager
 from multiprocessing.shared_memory import SharedMemory
-from typing import Any, Generator, KeysView, Optional
+from typing import Any, Generator, ItemsView, KeysView, Optional, ValuesView
 
 from .lock import lock
 from .templates import MEMORY_NAME
@@ -59,6 +59,12 @@ class SharedMemoryDict(OrderedDict):
 
     def __contains__(self, key: object) -> bool:
         return key in self._read_memory()
+
+    def items(self) -> ItemsView:  # type: ignore
+        return self._read_memory().items()
+
+    def values(self) -> ValuesView[Any]:  # type: ignore
+        return self._read_memory().values()
 
     def keys(self) -> KeysView[Any]:  # type: ignore
         return self._read_memory().keys()

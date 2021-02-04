@@ -84,3 +84,11 @@ class TestSharedMemoryDict:
     def test_should_return_dict_keys(self, shared_memory_dict, key, value):
         shared_memory_dict[key] = value
         assert list(shared_memory_dict.keys()) == [key]
+
+    def test_should_return_dict_values(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert list(shared_memory_dict.values()) == [value]
+
+    def test_should_return_dict_items(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert list(shared_memory_dict.items()) == [(key, value)]
