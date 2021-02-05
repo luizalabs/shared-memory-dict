@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 
 from shared_memory_dict import SharedMemoryDict
@@ -6,24 +8,24 @@ from shared_memory_dict import SharedMemoryDict
 class TestSharedMemoryDict:
     @pytest.fixture
     def shared_memory_dict(self):
-        smd = SharedMemoryDict(name='ut', size=1024)
+        smd = SharedMemoryDict(name="ut", size=1024)
         yield smd
         smd.clear()
         smd.cleanup()
 
     @pytest.fixture
     def key(self):
-        return 'fake-key'
+        return "fake-key"
 
     @pytest.fixture
     def value(self):
-        return 'fake-value'
+        return "fake-value"
 
     def test_should_add_a_key(self, shared_memory_dict, key, value):
         try:
             shared_memory_dict[key] = value
         except Exception as e:
-            pytest.fail(f'Its should not raises: {e}')
+            pytest.fail(f"Its should not raises: {e}")
 
     def test_should_read_a_key(self, shared_memory_dict, key, value):
         shared_memory_dict[key] = value
@@ -32,7 +34,7 @@ class TestSharedMemoryDict:
     def test_should_read_a_key_with_default(
         self, shared_memory_dict, key, value
     ):
-        default_value = 'default_value'
+        default_value = "default_value"
         assert shared_memory_dict.get(key, default_value) == default_value
 
     def test_should_read_a_key_without_default(
@@ -45,7 +47,7 @@ class TestSharedMemoryDict:
         try:
             del shared_memory_dict[key]
         except Exception as e:
-            pytest.fail(f'Its should not raises: {e}')
+            pytest.fail(f"Its should not raises: {e}")
 
         with pytest.raises(KeyError):
             shared_memory_dict[key]
@@ -64,22 +66,22 @@ class TestSharedMemoryDict:
         try:
             shared_memory_dict.clear()
         except Exception as e:
-            pytest.fail(f'Its should not raises: {e}')
+            pytest.fail(f"Its should not raises: {e}")
 
         with pytest.raises(KeyError):
             shared_memory_dict[key]
 
     def test_should_finalize_dict(self):
-        smd = SharedMemoryDict(name='unit-tests', size=64)
+        smd = SharedMemoryDict(name="unit-tests", size=64)
         try:
             del smd
         except Exception as e:
-            pytest.fail(f'Its should not raises: {e}')
+            pytest.fail(f"Its should not raises: {e}")
 
     def test_should_check_item_in_dict(self, shared_memory_dict, key, value):
         shared_memory_dict[key] = value
         assert (key in shared_memory_dict) is True
-        assert ('some-another-key' in shared_memory_dict) is False
+        assert ("some-another-key" in shared_memory_dict) is False
 
     def test_should_return_dict_keys(self, shared_memory_dict, key, value):
         shared_memory_dict[key] = value
@@ -106,3 +108,72 @@ class TestSharedMemoryDict:
         )
         with pytest.deprecated_call(match=deprecation_message):
             shared_memory_dict.popitem(last=True)
+
+    def test_should_be_iterable_as_a_dict(
+        self, shared_memory_dict, key, value
+    ):
+        shared_memory_dict[key] = value
+        assert list(iter(shared_memory_dict)) == list(iter({key: value}))
+
+    def test_can_be_iterated_in_reverse_order(
+        self, shared_memory_dict, key, value
+    ):
+        shared_memory_dict[key] = value
+        shared_memory_dict[value] = key
+        assert list(reversed(shared_memory_dict)) == [value, key]
+
+    def test_should_be_comparable(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert shared_memory_dict == {key: value}
+        assert shared_memory_dict != {value: key}
+
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9), reason="requires python3.9 or higher"
+    )
+    def test_allow_dict_merge(self, shared_memory_dict, key, value):
+        assert shared_memory_dict | {key: value} == {key: value}
+        assert {key: value} | shared_memory_dict == {key: value}
+
+    @pytest.mark.skipif(
+        sys.version_info < (3, 9), reason="requires python3.9 or higher"
+    )
+    def test_allow_dict_update(self, shared_memory_dict, key, value):
+        shared_memory_dict |= {key: value}
+        assert shared_memory_dict == {key: value}
+
+    def test_have_a_dict_like_str_conversion(
+        self, shared_memory_dict, key, value
+    ):
+        shared_memory_dict[key] = value
+        assert str(shared_memory_dict) == str({key: value})
+
+    def test_have_a_dict_like_repr(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert repr(shared_memory_dict) == repr({key: value})
+
+    def test_should_return_dict_values(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert list(shared_memory_dict.values()) == [value]
+
+    def test_should_return_dict_items(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert list(shared_memory_dict.items()) == [(key, value)]
+
+    def test_pop_an_item_without_default(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        assert shared_memory_dict.pop(key) == value
+
+    def test_pop_an_item_with_default(self, shared_memory_dict, key, value):
+        shared_memory_dict[key] = value
+        default = "default"
+        assert shared_memory_dict.pop("unknown", default) == default
+
+    def test_can_be_updated(self, shared_memory_dict, key, value):
+        shared_memory_dict.update({key: value})
+        assert shared_memory_dict[key] == value
+
+    def test_can_get_an_key_or_set_it_with_a_default(
+        self, shared_memory_dict, key, value
+    ):
+        shared_memory_dict.setdefault(key, value)
+        assert shared_memory_dict[key] == value
