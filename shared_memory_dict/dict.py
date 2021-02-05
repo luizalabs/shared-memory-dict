@@ -19,8 +19,8 @@ from .templates import MEMORY_NAME
 
 
 class SharedMemoryDict:
-    def __init__(self, name: str, size: int, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, name: str, size: int) -> None:
+        super().__init__()
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
         )
@@ -93,6 +93,7 @@ class SharedMemoryDict:
         return self._read_memory() != other
 
     if sys.version_info > (3, 8):
+
         def __or__(self, other: Any):
             return self._read_memory() | other
 
@@ -138,7 +139,9 @@ class SharedMemoryDict:
         with self._modify_db() as db:
             return db.setdefault(key, default)
 
-    def _get_or_create_memory_block(self, name: str, size: int) -> SharedMemory:
+    def _get_or_create_memory_block(
+        self, name: str, size: int
+    ) -> SharedMemory:
         try:
             return SharedMemory(name=name)
         except FileNotFoundError:
