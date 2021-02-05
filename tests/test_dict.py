@@ -84,3 +84,25 @@ class TestSharedMemoryDict:
     def test_should_return_dict_keys(self, shared_memory_dict, key, value):
         shared_memory_dict[key] = value
         assert list(shared_memory_dict.keys()) == [key]
+
+    def test_should_warning_about_move_to_end_deprecation(
+        self, shared_memory_dict, key, value
+    ):
+        shared_memory_dict[key] = value
+        deprecation_message = (
+            "The 'move_to_end' method will be removed in future versions. "
+            "Use pop and reassignment instead."
+        )
+        with pytest.deprecated_call(match=deprecation_message):
+            shared_memory_dict.move_to_end(key)
+
+    def test_should_warning_about_last_parameter_deprecation_in_popitem(
+        self, shared_memory_dict, key, value
+    ):
+        shared_memory_dict[key] = value
+        deprecation_message = (
+            "The 'last' parameter will be removed in future versions. "
+            "The 'popitem' function now always returns last inserted."
+        )
+        with pytest.deprecated_call(match=deprecation_message):
+            shared_memory_dict.popitem(last=True)

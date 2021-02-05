@@ -1,4 +1,5 @@
 import pickle
+import warnings
 from collections import OrderedDict
 from contextlib import contextmanager
 from multiprocessing.shared_memory import SharedMemory
@@ -19,6 +20,12 @@ class SharedMemoryDict(OrderedDict):
         self._memory_block.close()
 
     def move_to_end(self, key: str, last: Optional[bool] = True) -> None:
+        warnings.warn(
+            "The 'move_to_end' method will be removed in future versions. "
+            "Use pop and reassignment instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         with self._modify_db() as db:
             db.move_to_end(key, last=last)
 
@@ -26,9 +33,16 @@ class SharedMemoryDict(OrderedDict):
     def clear(self) -> None:
         self._save_memory(OrderedDict())
 
-    def popitem(self, last: Optional[bool] = True) -> Any:
+    def popitem(self, last: Optional[bool] = None) -> Any:
+        if last is not None:
+            warnings.warn(
+                "The 'last' parameter will be removed in future versions. "
+                "The 'popitem' function now always returns last inserted.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         with self._modify_db() as db:
-            return db.popitem(last)
+            return db.popitem()
 
     @contextmanager
     @lock
@@ -63,9 +77,7 @@ class SharedMemoryDict(OrderedDict):
     def keys(self) -> KeysView[Any]:  # type: ignore
         return self._read_memory().keys()
 
-    def _get_or_create_memory_block(
-        self, name: str, size: int
-    ) -> SharedMemory:
+    def _get_or_create_memory_block(self, name: str, size: int) -> SharedMemory:
         try:
             return SharedMemory(name=name)
         except FileNotFoundError:
