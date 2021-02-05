@@ -133,7 +133,7 @@ class SharedMemoryDict:
 
     def update(self, other=(), /, **kwds):
         with self._modify_db() as db:
-            return db.update(other, **kwds)
+            db.update(other, **kwds)
 
     def setdefault(self, key: str, default: Optional[Any] = None):
         with self._modify_db() as db:
