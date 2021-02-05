@@ -1,15 +1,24 @@
 import pickle
+import sys
 import warnings
-from collections import OrderedDict
 from contextlib import contextmanager
 from multiprocessing.shared_memory import SharedMemory
-from typing import Any, Generator, KeysView, Optional
+from typing import (
+    Any,
+    Dict,
+    Generator,
+    ItemsView,
+    Iterator,
+    KeysView,
+    Optional,
+    ValuesView,
+)
 
 from .lock import lock
 from .templates import MEMORY_NAME
 
 
-class SharedMemoryDict(OrderedDict):
+class SharedMemoryDict:
     def __init__(self, name: str, size: int, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._memory_block = self._get_or_create_memory_block(
@@ -27,11 +36,11 @@ class SharedMemoryDict(OrderedDict):
             stacklevel=2,
         )
         with self._modify_db() as db:
-            db.move_to_end(key, last=last)
+            db[key] = db.pop(key)
 
     @lock
     def clear(self) -> None:
-        self._save_memory(OrderedDict())
+        self._save_memory({})
 
     def popitem(self, last: Optional[bool] = None) -> Any:
         if last is not None:
@@ -51,9 +60,6 @@ class SharedMemoryDict(OrderedDict):
         yield db
         self._save_memory(db)
 
-    def get(self, key: str, default: Optional[Any] = None) -> Any:
-        return self._read_memory().get(key, default)
-
     def __getitem__(self, key: str) -> Any:
         return self._read_memory()[key]
 
@@ -68,14 +74,69 @@ class SharedMemoryDict(OrderedDict):
         with self._modify_db() as db:
             del db[key]
 
+    def __iter__(self) -> Iterator:
+        return iter(self._read_memory())
+
+    def __reversed__(self):
+        return reversed(self._read_memory())
+
     def __del__(self) -> None:
         self.cleanup()
 
-    def __contains__(self, key: object) -> bool:
+    def __contains__(self, key: str) -> bool:
         return key in self._read_memory()
+
+    def __eq__(self, other: Any) -> bool:
+        return self._read_memory() == other
+
+    def __ne__(self, other: Any) -> bool:
+        return self._read_memory() != other
+
+    if sys.version_info > (3, 8):
+        def __or__(self, other: Any):
+            return self._read_memory() | other
+
+        def __ror__(self, other: Any):
+            return other | self._read_memory()
+
+        def __ior__(self, other: Any):
+            with self._modify_db() as db:
+                db |= other
+                return db
+
+    def __str__(self) -> str:
+        return str(self._read_memory())
+
+    def __repr__(self) -> str:
+        return repr(self._read_memory())
+
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
+        return self._read_memory().get(key, default)
 
     def keys(self) -> KeysView[Any]:  # type: ignore
         return self._read_memory().keys()
+
+    def values(self) -> ValuesView[Any]:  # type: ignore
+        return self._read_memory().values()
+
+    def items(self) -> ItemsView:  # type: ignore
+        return self._read_memory().items()
+
+    __marker = object()
+
+    def pop(self, key: str, default: Optional[Any] = __marker):
+        with self._modify_db() as db:
+            if default is self.__marker:
+                return db.pop(key)
+            return db.pop(key, default)
+
+    def update(self, other=(), /, **kwds):
+        with self._modify_db() as db:
+            return db.update(other, **kwds)
+
+    def setdefault(self, key: str, default: Optional[Any] = None):
+        with self._modify_db() as db:
+            return db.setdefault(key, default)
 
     def _get_or_create_memory_block(self, name: str, size: int) -> SharedMemory:
         try:
@@ -83,12 +144,12 @@ class SharedMemoryDict(OrderedDict):
         except FileNotFoundError:
             return SharedMemory(name=name, create=True, size=size)
 
-    def _save_memory(self, db: OrderedDict) -> None:
+    def _save_memory(self, db: Dict[str, Any]) -> None:
         data = pickle.dumps(db, pickle.HIGHEST_PROTOCOL)
         self._memory_block.buf[: len(data)] = data  # type: ignore
 
-    def _read_memory(self) -> OrderedDict:
+    def _read_memory(self) -> Dict[str, Any]:
         try:
             return pickle.loads(self._memory_block.buf)
         except pickle.UnpicklingError:
-            return OrderedDict()
+            return {}
