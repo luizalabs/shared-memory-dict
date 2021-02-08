@@ -123,11 +123,11 @@ class SharedMemoryDict:
     def items(self) -> ItemsView:  # type: ignore
         return self._read_memory().items()
 
-    __marker = object()
+    __SENTINEL = object()
 
-    def pop(self, key: str, default: Optional[Any] = __marker):
+    def pop(self, key: str, default: Optional[Any] = __SENTINEL):
         with self._modify_db() as db:
-            if default is self.__marker:
+            if default is self.__SENTINEL:
                 return db.pop(key)
             return db.pop(key, default)
 
