@@ -18,6 +18,9 @@ from .lock import lock
 from .templates import MEMORY_NAME
 
 
+SENTINEL = object()
+
+
 class SharedMemoryDict:
     def __init__(self, name: str, size: int) -> None:
         super().__init__()
@@ -123,9 +126,7 @@ class SharedMemoryDict:
     def items(self) -> ItemsView:  # type: ignore
         return self._read_memory().items()
 
-    __SENTINEL = object()
-
-    def pop(self, key: str, default: Optional[Any] = __SENTINEL):
+    def pop(self, key: str, default: Optional[Any] = SENTINEL):
         with self._modify_db() as db:
             if default is self.__SENTINEL:
                 return db.pop(key)
