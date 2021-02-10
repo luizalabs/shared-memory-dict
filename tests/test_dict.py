@@ -92,8 +92,8 @@ class TestSharedMemoryDict:
     ):
         shared_memory_dict[key] = value
         deprecation_message = (
-            "The 'move_to_end' method will be removed in future versions. "
-            "Use pop and reassignment instead."
+            'The \'move_to_end\' method will be removed in future versions. '
+            'Use pop and reassignment instead.'
         )
         with pytest.deprecated_call(match=deprecation_message):
             shared_memory_dict.move_to_end(key)
@@ -103,8 +103,8 @@ class TestSharedMemoryDict:
     ):
         shared_memory_dict[key] = value
         deprecation_message = (
-            "The 'last' parameter will be removed in future versions. "
-            "The 'popitem' function now always returns last inserted."
+            'The \'last\' parameter will be removed in future versions. '
+            'The \'popitem\' function now always returns last inserted.'
         )
         with pytest.deprecated_call(match=deprecation_message):
             shared_memory_dict.popitem(last=True)

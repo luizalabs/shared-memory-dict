@@ -30,8 +30,8 @@ class SharedMemoryDict:
 
     def move_to_end(self, key: str, last: Optional[bool] = True) -> None:
         warnings.warn(
-            "The 'move_to_end' method will be removed in future versions. "
-            "Use pop and reassignment instead.",
+            'The \'move_to_end\' method will be removed in future versions. '
+            'Use pop and reassignment instead.',
             DeprecationWarning,
             stacklevel=2,
         )
@@ -45,8 +45,8 @@ class SharedMemoryDict:
     def popitem(self, last: Optional[bool] = None) -> Any:
         if last is not None:
             warnings.warn(
-                "The 'last' parameter will be removed in future versions. "
-                "The 'popitem' function now always returns last inserted.",
+                'The \'last\' parameter will be removed in future versions. '
+                'The \'popitem\' function now always returns last inserted.',
                 DeprecationWarning,
                 stacklevel=2,
             )
