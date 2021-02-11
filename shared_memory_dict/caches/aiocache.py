@@ -77,11 +77,7 @@ class SharedMemoryCache(BaseCache):
         return True
 
     async def _add(
-        self,
-        key: str,
-        value: Any,
-        ttl: Optional[Number] = None,
-        _conn=None,
+        self, key: str, value: Any, ttl: Optional[Number] = None, _conn=None,
     ):
         if key in self._cache:
             raise ValueError(
