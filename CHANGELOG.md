@@ -1,8 +1,8 @@
 Changelog
 =========
 
-[NEXT_RELEASE]
---------------
+0.5.0 (2021-02-11)
+------------------
 - Configure black as formatter
 - Implement Mapping interface (all methods)
 - Deprecate `move_to_end and` method and `last` parameter on `popitem`
