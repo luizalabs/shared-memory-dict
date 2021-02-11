@@ -17,7 +17,6 @@ from typing import (
 from .lock import lock
 from .templates import MEMORY_NAME
 
-
 SENTINEL = object()
 
 
