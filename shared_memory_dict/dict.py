@@ -128,7 +128,7 @@ class SharedMemoryDict:
 
     def pop(self, key: str, default: Optional[Any] = SENTINEL):
         with self._modify_db() as db:
-            if default is self.__SENTINEL:
+            if default is SENTINEL:
                 return db.pop(key)
             return db.pop(key, default)
 
