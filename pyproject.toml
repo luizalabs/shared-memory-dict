@@ -52,3 +52,6 @@ omit = ["*/*/tests/*", "*/*/settings/*"]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
+[tool.black]
+skip-string-normalization = true
+line_length = 79
