@@ -21,6 +21,10 @@ class TestSharedMemoryDict:
     def value(self):
         return 'fake-value'
 
+    @pytest.fixture
+    def big_value(self):
+        return 'value' * 2048
+
     def test_should_add_a_key(self, shared_memory_dict, key, value):
         try:
             shared_memory_dict[key] = value
@@ -177,3 +181,7 @@ class TestSharedMemoryDict:
     ):
         shared_memory_dict.setdefault(key, value)
         assert shared_memory_dict[key] == value
+
+    def test_raise_an_error_when_memory_is_full(self, shared_memory_dict, key, big_value):
+        with pytest.raises(ValueError, match="exceeds available storage"):
+            shared_memory_dict[key] = big_value
