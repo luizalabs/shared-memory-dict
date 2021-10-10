@@ -24,7 +24,7 @@ aiocache = { version = "^0.11.1", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-flake8 = "^3.8.3"
+flake8 = "^3.9.2"
 mypy = "^0.910"
 black = "^21.9b0"
 isort = "^5.0.4"

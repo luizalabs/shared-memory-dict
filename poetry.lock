@@ -342,7 +342,7 @@ django = ["django"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "953d091e0755a6625d51ca8ae2b17723a308d788e5c4b5ffc32a817a06df1f98"
+content-hash = "52c16a357ff40923c8fc658bb5d416a01c55e9f3dde3719a0f0b742e3698d88d"
 
 [metadata.files]
 aiocache = [
