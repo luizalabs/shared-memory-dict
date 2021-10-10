@@ -23,14 +23,13 @@ django = { version = "^3.0.8", optional = true}
 aiocache = { version = "^0.11.1", optional = true}
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
-pytest-coverage = "^0.0"
+pytest = "^6.2.5"
 flake8 = "^3.8.3"
-mypy = "^0.782"
-black = "^19.10b0"
+mypy = "^0.910"
+black = "^21.9b0"
 isort = "^5.0.4"
 aiocache = "^0.11.1"
-pytest-asyncio = "^0.14.0"
+pytest-asyncio = "^0.15.1"
 
 [tool.poetry.extras]
 django = ["django"]
