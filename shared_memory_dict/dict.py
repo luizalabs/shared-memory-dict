@@ -23,12 +23,15 @@ SENTINEL = object()
 class SharedMemoryDict:
     def __init__(self, name: str, size: int) -> None:
         super().__init__()
+        self._created = False
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
         )
 
     def cleanup(self) -> None:
         self._memory_block.close()
+        if self._created:
+            self.unlink()
 
     def unlink(self) -> None:
         """Requests that the underlying shared memory block be destroyed.
@@ -153,6 +156,7 @@ class SharedMemoryDict:
         try:
             return SharedMemory(name=name)
         except FileNotFoundError:
+            self._created = True
             return SharedMemory(name=name, create=True, size=size)
 
     def _save_memory(self, db: Dict[str, Any]) -> None:
