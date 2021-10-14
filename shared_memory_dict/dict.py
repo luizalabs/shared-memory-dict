@@ -26,6 +26,7 @@ class SharedMemoryDict:
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
         )
+        self._name = name
 
     def cleanup(self) -> None:
         self._memory_block.close()
@@ -148,11 +149,27 @@ class SharedMemoryDict:
             return SharedMemory(name=name, create=True, size=size)
 
     def _save_memory(self, db: Dict[str, Any]) -> None:
+        db = {key: self._map_value(key, value) for key, value in db.items()}
         data = pickle.dumps(db, pickle.HIGHEST_PROTOCOL)
         self._memory_block.buf[: len(data)] = data  # type: ignore
 
+    def _map_value(self, key, value) -> Any:
+        if isinstance(key, str) and key.startswith('__dict-'):
+            raise RuntimeError('Hacking attempt.')
+        if isinstance(value, (dict, SharedMemoryDict)) and '/' not in str(key):
+            return '__dict-%s-%s__' % (self._name, key)
+        return value
+
     def _read_memory(self) -> Dict[str, Any]:
         try:
-            return pickle.loads(self._memory_block.buf)
+            db = pickle.loads(self._memory_block.buf)
         except pickle.UnpicklingError:
             return {}
+        else:
+            db = {key: self._unmap_value(key, value) for key, value in db.items()}
+            return db
+
+    def _unmap_value(self, key, value) -> Any:
+        if isinstance(value, str) and value.startswith('__dict-') and value.endswith('__') and '/' not in value:
+            return SharedMemoryDict(key[7:-2], self._memory_block._size)
+        return value
