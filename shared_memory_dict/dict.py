@@ -30,6 +30,14 @@ class SharedMemoryDict:
     def cleanup(self) -> None:
         self._memory_block.close()
 
+    def unlink(self) -> None:
+        """Requests that the underlying shared memory block be destroyed.
+
+        In order to ensure proper cleanup of resources, unlink should be
+        called once (and only once) across all processes which have access
+        to the shared memory block."""
+        self._memory_block.unlink()
+
     def move_to_end(self, key: str, last: Optional[bool] = True) -> None:
         warnings.warn(
             'The \'move_to_end\' method will be removed in future versions. '
