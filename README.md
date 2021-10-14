@@ -6,12 +6,14 @@ A very simple [shared memory](https://docs.python.org/3/library/multiprocessing.
 ```python
 >> from shared_memory_dict import SharedMemoryDict
 >> smd = SharedMemoryDict(name='tokens', size=1024)
->> smd['some-key'] = 'some-value-with-any-type'
+>> smd['some-key'] = 'some-value-with-any-primitive-type'
 >> smd['some-key']
-'some-value-with-any-type'
+'some-value-with-any-primitive-type'
 ```
 
 > The arg `name` defines the location of the memory block, so if you want to share the memory between process use the same name
+
+> By primitive type we mean `int`, `float`, `bool`, `str` (less than 10M bytes each), `bytes` (less than 10M bytes each), and `None` built-in data types.
 
 ## Installation
 Using `pip`:
