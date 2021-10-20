@@ -17,7 +17,7 @@ from typing import (
 from .lock import lock
 from .templates import MEMORY_NAME
 
-SENTINEL = object()
+NOT_GIVEN = object()
 
 
 class SharedMemoryDict:
@@ -125,9 +125,9 @@ class SharedMemoryDict:
     def items(self) -> ItemsView:  # type: ignore
         return self._read_memory().items()
 
-    def pop(self, key: str, default: Optional[Any] = SENTINEL):
+    def pop(self, key: str, default: Optional[Any] = NOT_GIVEN):
         with self._modify_db() as db:
-            if default is SENTINEL:
+            if default is NOT_GIVEN:
                 return db.pop(key)
             return db.pop(key, default)
 
