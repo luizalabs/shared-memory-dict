@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.0 (2021-10-20)
+------------------
+- Replace SENTINEL with NOT_GIVEN
+- Update project dependencies
+- Add a better message on the storage issue
+
 0.5.0 (2021-02-11)
 ------------------
 - Configure black as formatter
