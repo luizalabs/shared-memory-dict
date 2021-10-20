@@ -149,7 +149,10 @@ class SharedMemoryDict:
 
     def _save_memory(self, db: Dict[str, Any]) -> None:
         data = pickle.dumps(db, pickle.HIGHEST_PROTOCOL)
-        self._memory_block.buf[: len(data)] = data  # type: ignore
+        try:
+            self._memory_block.buf[: len(data)] = data  # type: ignore
+        except ValueError as exc:
+            raise ValueError("exceeds available storage") from exc
 
     def _read_memory(self) -> Dict[str, Any]:
         try:
