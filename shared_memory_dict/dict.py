@@ -116,13 +116,13 @@ class SharedMemoryDict:
     def get(self, key: str, default: Optional[Any] = None) -> Any:
         return self._read_memory().get(key, default)
 
-    def keys(self) -> KeysView[Any]:  # type: ignore
+    def keys(self) -> KeysView[Any]:
         return self._read_memory().keys()
 
-    def values(self) -> ValuesView[Any]:  # type: ignore
+    def values(self) -> ValuesView[Any]:
         return self._read_memory().values()
 
-    def items(self) -> ItemsView:  # type: ignore
+    def items(self) -> ItemsView:
         return self._read_memory().items()
 
     def pop(self, key: str, default: Optional[Any] = NOT_GIVEN):
@@ -150,7 +150,7 @@ class SharedMemoryDict:
     def _save_memory(self, db: Dict[str, Any]) -> None:
         data = pickle.dumps(db, pickle.HIGHEST_PROTOCOL)
         try:
-            self._memory_block.buf[: len(data)] = data  # type: ignore
+            self._memory_block.buf[: len(data)] = data
         except ValueError as exc:
             raise ValueError("exceeds available storage") from exc
 
