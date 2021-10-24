@@ -185,3 +185,13 @@ class TestSharedMemoryDict:
     def test_raise_an_error_when_memory_is_full(self, shared_memory_dict, key, big_value):
         with pytest.raises(ValueError, match="exceeds available storage"):
             shared_memory_dict[key] = big_value
+    
+    def test_should_expose_shared_memory(self, shared_memory_dict):
+        try:
+            shared_memory_dict.shm
+        except AttributeError:
+            pytest.fail('Should expose shared memory')
+
+    def test_shared_memory_attribute_should_be_read_only(self, shared_memory_dict):
+        with pytest.raises(AttributeError):
+            shared_memory_dict.shm = 'test'

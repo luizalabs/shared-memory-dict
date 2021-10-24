@@ -159,3 +159,7 @@ class SharedMemoryDict:
             return pickle.loads(self._memory_block.buf)
         except pickle.UnpicklingError:
             return {}
+
+    @property
+    def shm(self) -> SharedMemory:
+        return self._memory_block
