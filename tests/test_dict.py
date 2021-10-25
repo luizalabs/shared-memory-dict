@@ -3,6 +3,8 @@ import sys
 import pytest
 
 from shared_memory_dict import SharedMemoryDict
+from shared_memory_dict.dict import DEFAULT_SERIALIZER
+from shared_memory_dict.serializers import JSONSerializer
 
 
 class TestSharedMemoryDict:
@@ -182,7 +184,9 @@ class TestSharedMemoryDict:
         shared_memory_dict.setdefault(key, value)
         assert shared_memory_dict[key] == value
 
-    def test_raise_an_error_when_memory_is_full(self, shared_memory_dict, key, big_value):
+    def test_raise_an_error_when_memory_is_full(
+        self, shared_memory_dict, key, big_value
+    ):
         with pytest.raises(ValueError, match="exceeds available storage"):
             shared_memory_dict[key] = big_value
     
@@ -195,3 +199,15 @@ class TestSharedMemoryDict:
     def test_shared_memory_attribute_should_be_read_only(self, shared_memory_dict):
         with pytest.raises(AttributeError):
             shared_memory_dict.shm = 'test'
+
+    def test_use_default_serializer_when_not_specified(
+        self, shared_memory_dict
+    ):
+        assert shared_memory_dict._serializer is DEFAULT_SERIALIZER
+
+    def test_use_custom_serializer_when_specified(self):
+        serializer = JSONSerializer()
+        smd = SharedMemoryDict(
+            name='unit-tests', size=64, serializer=serializer
+        )
+        assert smd._serializer is serializer
