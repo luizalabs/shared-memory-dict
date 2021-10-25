@@ -4,11 +4,31 @@ A very simple [shared memory](https://docs.python.org/3/library/multiprocessing.
 **Requires**: Python >= 3.8
 
 ```python
+>>> # In the first Python interactive shell
 >> from shared_memory_dict import SharedMemoryDict
 >> smd = SharedMemoryDict(name='tokens', size=1024)
 >> smd['some-key'] = 'some-value-with-any-type'
 >> smd['some-key']
 'some-value-with-any-type'
+
+>>> # In either the same shell or a new Python shell on the same machine
+>> existing_smd = SharedMemoryDict(name='tokens', size=1024)
+>>> existing_smd['some-key']
+'some-value-with-any-type'
+>>> existing_smd['new-key'] = 'some-value-with-any-type'
+
+
+>>> # Back in the first Python interactive shell, smd reflects this change
+>> smd['new-key']
+'some-value-with-any-type'
+
+>>> # Clean up from within the second Python shell
+>>> existing_smd.shm.close()  # or "del existing_smd"
+
+>>> # Clean up from within the first Python shell
+>>> smd.shm.close()
+>>> smd.shm.unlink()  # Free and release the shared memory block at the very end
+>>> del smd  # use of smd after call unlink() is unsupported
 ```
 
 > The arg `name` defines the location of the memory block, so if you want to share the memory between process use the same name
