@@ -42,6 +42,34 @@ pip install shared-memory-dict
 ## Locks
 To use [multiprocessing.Lock](https://docs.python.org/3.8/library/multiprocessing.html#multiprocessing.Lock) on write operations of shared memory dict set environment variable `SHARED_MEMORY_USE_LOCK=1`.
 
+## Serialization
+
+We use [pickle](https://docs.python.org/3/library/pickle.html) as default to read and write the data into the shared memory block.
+
+You can create a custom serializer by implementing the `dumps` and `loads` methods.
+
+```python
+class JSONSerializer:
+    def dumps(self, obj: dict) -> bytes:
+        return json.dumps(obj).encode()
+
+    def loads(self, data: bytes) -> dict:
+        return json.loads(data)
+```
+
+To use the custom serializer you must set it when creating a new shared memory dict instance:
+ 
+```python
+>>> smd = SharedMemoryDict(name='tokens', size=1024, serializer=JSONSerializer())
+```
+
+### Caveat
+
+The pickle module is not secure. Only unpickle data you trust.
+
+See more [here](https://docs.python.org/3/library/pickle.html).
+
+
 ## Django Cache Implementation
 There's a [Django Cache Implementation](https://docs.djangoproject.com/en/3.0/topics/cache/) with Shared Memory Dict:
 
