@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.7.0 (2020-11-26)
+------------------
+- Run CI on different python versions
+- Add support for python 3.10
+- Improve README with more examples and calls to close and unlink
+- Expose shared memory as readonly attribute as ShareableList
+- Modify SharedMemoryDict to use serializers
+- Create serializers for json and pickle
+
 0.6.0 (2021-10-20)
 ------------------
 - Replace SENTINEL with NOT_GIVEN
