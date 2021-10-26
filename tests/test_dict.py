@@ -1,3 +1,4 @@
+import logging
 import sys
 
 import pytest
@@ -6,11 +7,13 @@ from shared_memory_dict import SharedMemoryDict
 from shared_memory_dict.dict import DEFAULT_SERIALIZER
 from shared_memory_dict.serializers import JSONSerializer
 
+DEFAULT_MEMORY_SIZE = 1024
+
 
 class TestSharedMemoryDict:
     @pytest.fixture
     def shared_memory_dict(self):
-        smd = SharedMemoryDict(name='ut', size=1024)
+        smd = SharedMemoryDict(name='ut', size=DEFAULT_MEMORY_SIZE)
         yield smd
         smd.clear()
         smd.cleanup()
@@ -211,3 +214,11 @@ class TestSharedMemoryDict:
             name='unit-tests', size=64, serializer=serializer
         )
         assert smd._serializer is serializer
+
+    def test_should_log_when_failed_to_load_shared_memory_content(self, shared_memory_dict, key, value, caplog):
+        smd = SharedMemoryDict(
+            name='ut', size=DEFAULT_MEMORY_SIZE, serializer=JSONSerializer()
+        )
+        with caplog.at_level(logging.WARNING):
+            smd[key] = value
+            assert "Fail to load data:" in caplog.text

@@ -1,3 +1,4 @@
+import logging
 import sys
 import warnings
 from contextlib import contextmanager
@@ -19,6 +20,9 @@ from .templates import MEMORY_NAME
 
 NOT_GIVEN = object()
 DEFAULT_SERIALIZER = PickleSerializer()
+
+
+logger = logging.getLogger(__name__)
 
 
 class SharedMemoryDict:
@@ -165,7 +169,8 @@ class SharedMemoryDict:
     def _read_memory(self) -> Dict[str, Any]:
         try:
             return self._serializer.loads(self._memory_block.buf)
-        except Exception:
+        except Exception as exc:
+            logging.warning(f"Fail to load data: {exc!r}")
             return {}
 
     @property
