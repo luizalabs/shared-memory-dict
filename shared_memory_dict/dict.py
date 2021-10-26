@@ -1,4 +1,4 @@
-import pickle
+import logging
 import sys
 import warnings
 from contextlib import contextmanager
@@ -15,14 +15,26 @@ from typing import (
 )
 
 from .lock import lock
+from .serializers import PickleSerializer, SharedMemoryDictSerializer
 from .templates import MEMORY_NAME
 
 NOT_GIVEN = object()
+DEFAULT_SERIALIZER = PickleSerializer()
+
+
+logger = logging.getLogger(__name__)
 
 
 class SharedMemoryDict:
-    def __init__(self, name: str, size: int) -> None:
+    def __init__(
+        self,
+        name: str,
+        size: int,
+        *,
+        serializer: SharedMemoryDictSerializer = DEFAULT_SERIALIZER,
+    ) -> None:
         super().__init__()
+        self._serializer = serializer
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
         )
@@ -148,7 +160,7 @@ class SharedMemoryDict:
             return SharedMemory(name=name, create=True, size=size)
 
     def _save_memory(self, db: Dict[str, Any]) -> None:
-        data = pickle.dumps(db, pickle.HIGHEST_PROTOCOL)
+        data = self._serializer.dumps(db)
         try:
             self._memory_block.buf[: len(data)] = data
         except ValueError as exc:
@@ -156,8 +168,9 @@ class SharedMemoryDict:
 
     def _read_memory(self) -> Dict[str, Any]:
         try:
-            return pickle.loads(self._memory_block.buf)
-        except pickle.UnpicklingError:
+            return self._serializer.loads(self._memory_block.buf)
+        except Exception as exc:
+            logger.warning(f"Fail to load data: {exc!r}")
             return {}
 
     @property
