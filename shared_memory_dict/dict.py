@@ -170,7 +170,7 @@ class SharedMemoryDict:
         try:
             return self._serializer.loads(self._memory_block.buf)
         except Exception as exc:
-            logging.warning(f"Fail to load data: {exc!r}")
+            logger.warning(f"Fail to load data: {exc!r}")
             return {}
 
     @property
