@@ -34,6 +34,7 @@ class SharedMemoryDict:
         serializer: SharedMemoryDictSerializer = DEFAULT_SERIALIZER,
     ) -> None:
         super().__init__()
+        self.name = name
         self._serializer = serializer
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
