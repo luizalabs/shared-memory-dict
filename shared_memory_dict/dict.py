@@ -157,7 +157,10 @@ class SharedMemoryDict:
         try:
             return SharedMemory(name=name)
         except FileNotFoundError:
-            return SharedMemory(name=name, create=True, size=size)
+            shm = SharedMemory(name=name, create=True, size=size)
+            data = self._serializer.dumps({})
+            shm.buf[: len(data)] = data
+            return shm
 
     def _save_memory(self, db: Dict[str, Any]) -> None:
         data = self._serializer.dumps(db)
@@ -168,7 +171,7 @@ class SharedMemoryDict:
 
     def _read_memory(self) -> Dict[str, Any]:
         try:
-            return self._serializer.loads(self._memory_block.buf)
+            return self._serializer.loads(self._memory_block.buf.tobytes())
         except Exception as exc:
             logger.warning(f"Fail to load data: {exc!r}")
             return {}

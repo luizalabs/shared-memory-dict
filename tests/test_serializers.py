@@ -37,7 +37,7 @@ class TestJSONSerializer:
 
     @pytest.fixture
     def bytes_content(self):
-        return b'{"key": "value"}'
+        return b'{"key": "value"}\x00'
 
     @pytest.fixture
     def dict_content(self):

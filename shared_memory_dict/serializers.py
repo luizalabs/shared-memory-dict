@@ -1,6 +1,8 @@
 import json
 import pickle
-from typing import Protocol
+from typing import Final, Protocol
+
+NULL_BYTE: Final = b"\x00"
 
 
 class SharedMemoryDictSerializer(Protocol):
@@ -13,9 +15,10 @@ class SharedMemoryDictSerializer(Protocol):
 
 class JSONSerializer:
     def dumps(self, obj: dict) -> bytes:
-        return json.dumps(obj).encode()
+        return json.dumps(obj).encode() + NULL_BYTE
 
     def loads(self, data: bytes) -> dict:
+        data = bytes(data).split(NULL_BYTE, 1)[0]
         return json.loads(data)
 
 
