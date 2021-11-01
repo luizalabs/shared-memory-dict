@@ -50,10 +50,10 @@ You can create a custom serializer by implementing the `dumps` and `loads` metho
 
 ```python
 class JSONSerializer:
-    def dumps(self, smd, obj: dict) -> bytes:
+    def dumps(self, obj: dict) -> bytes:
         return json.dumps(obj).encode()
 
-    def loads(self, smd, data: bytes) -> dict:
+    def loads(self, data: bytes) -> dict:
         return json.loads(data)
 ```
 

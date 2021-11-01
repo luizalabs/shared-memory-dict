@@ -22,12 +22,12 @@ class TestPickleSerializer:
     def test_loads_should_transform_bytes_into_dict(
         self, pickle_serializer, bytes_content, dict_content
     ):
-        assert pickle_serializer.loads(None, bytes_content) == dict_content
+        assert pickle_serializer.loads(bytes_content) == dict_content
 
     def test_dumps_should_transform_dict_into_bytes(
         self, pickle_serializer, bytes_content, dict_content
     ):
-        assert pickle_serializer.dumps(None, dict_content) == bytes_content
+        assert pickle_serializer.dumps(dict_content) == bytes_content
 
 
 class TestJSONSerializer:
@@ -46,9 +46,9 @@ class TestJSONSerializer:
     def test_loads_should_transform_bytes_into_dict(
         self, json_serializer, bytes_content, dict_content
     ):
-        assert json_serializer.loads(None, bytes_content) == dict_content
+        assert json_serializer.loads(bytes_content) == dict_content
 
     def test_dumps_should_transform_dict_into_bytes(
         self, json_serializer, bytes_content, dict_content
     ):
-        assert json_serializer.dumps(None, dict_content) == bytes_content
+        assert json_serializer.dumps(dict_content) == bytes_content
