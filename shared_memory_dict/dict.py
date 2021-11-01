@@ -40,6 +40,8 @@ class SharedMemoryDict:
         )
 
     def cleanup(self) -> None:
+        if not hasattr(self, '_memory_block'):
+            return
         self._memory_block.close()
 
     def move_to_end(self, key: str, last: Optional[bool] = True) -> None:
