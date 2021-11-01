@@ -49,13 +49,20 @@ We use [pickle](https://docs.python.org/3/library/pickle.html) as default to rea
 You can create a custom serializer by implementing the `dumps` and `loads` methods.
 
 ```python
+NULL_BYTE: Final = b"\x00"
+
+
 class JSONSerializer:
     def dumps(self, obj: dict) -> bytes:
-        return json.dumps(obj).encode()
+        return json.dumps(obj).encode() + NULL_BYTE
 
     def loads(self, data: bytes) -> dict:
+        data = bytes(data).split(NULL_BYTE, 1)[0]
         return json.loads(data)
+
 ```
+
+Note: A null byte is used to separate the dictionary contents from the bytes that are in memory.
 
 To use the custom serializer you must set it when creating a new shared memory dict instance:
  
