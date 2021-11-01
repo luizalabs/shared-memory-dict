@@ -6,6 +6,9 @@ NULL_BYTE: Final = b"\x00"
 
 
 class SharedMemoryDictSerializer(Protocol):
+    def __init__(self, smd) -> None:
+        ...
+
     def dumps(self, obj: dict) -> bytes:
         ...
 
@@ -14,6 +17,9 @@ class SharedMemoryDictSerializer(Protocol):
 
 
 class JSONSerializer:
+    def __init__(self, smd) -> None:
+        pass
+
     def dumps(self, obj: dict) -> bytes:
         return json.dumps(obj).encode() + NULL_BYTE
 
@@ -23,6 +29,9 @@ class JSONSerializer:
 
 
 class PickleSerializer:
+    def __init__(self, smd) -> None:
+        pass
+
     def dumps(self, obj: dict) -> bytes:
         return pickle.dumps(obj, pickle.HIGHEST_PROTOCOL)
 

@@ -6,7 +6,7 @@ from shared_memory_dict.serializers import JSONSerializer, PickleSerializer
 class TestPickleSerializer:
     @pytest.fixture
     def pickle_serializer(self):
-        return PickleSerializer()
+        return PickleSerializer(None)
 
     @pytest.fixture
     def bytes_content(self):
@@ -33,7 +33,7 @@ class TestPickleSerializer:
 class TestJSONSerializer:
     @pytest.fixture
     def json_serializer(self):
-        return JSONSerializer()
+        return JSONSerializer(None)
 
     @pytest.fixture
     def bytes_content(self):

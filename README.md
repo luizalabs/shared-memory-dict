@@ -50,6 +50,8 @@ You can create a custom serializer by implementing the `dumps` and `loads` metho
 
 ```python
 class JSONSerializer:
+    def __init__(self, smd) -> None:
+        pass
     def dumps(self, obj: dict) -> bytes:
         return json.dumps(obj).encode()
 
@@ -60,7 +62,7 @@ class JSONSerializer:
 To use the custom serializer you must set it when creating a new shared memory dict instance:
  
 ```python
->>> smd = SharedMemoryDict(name='tokens', size=1024, serializer=JSONSerializer())
+>>> smd = SharedMemoryDict(name='tokens', size=1024, serializer=JSONSerializer)
 ```
 
 ### Caveat

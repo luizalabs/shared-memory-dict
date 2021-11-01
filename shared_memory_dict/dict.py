@@ -15,11 +15,11 @@ from typing import (
 )
 
 from .lock import lock
-from .serializers import PickleSerializer, SharedMemoryDictSerializer
+from .serializers import PickleSerializer
 from .templates import MEMORY_NAME
 
 NOT_GIVEN = object()
-DEFAULT_SERIALIZER = PickleSerializer()
+DEFAULT_SERIALIZER = PickleSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -31,11 +31,11 @@ class SharedMemoryDict:
         name: str,
         size: int,
         *,
-        serializer: SharedMemoryDictSerializer = DEFAULT_SERIALIZER,
+        serializer: type = DEFAULT_SERIALIZER,
     ) -> None:
         super().__init__()
         self.name = name
-        self._serializer = serializer
+        self._serializer = serializer(self)
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
         )
