@@ -30,13 +30,14 @@ class SharedMemoryDict:
         self,
         name: str,
         size: int,
-        *,
+        *args,
         serializer: SharedMemoryDictSerializer = DEFAULT_SERIALIZER,
+        **kwargs
     ) -> None:
         super().__init__()
         self._serializer = serializer
         self._memory_block = self._get_or_create_memory_block(
-            MEMORY_NAME.format(name=name), size
+            MEMORY_NAME.format(name=name), size, dict(*args, **kwargs)
         )
 
     def cleanup(self) -> None:
@@ -154,13 +155,13 @@ class SharedMemoryDict:
             return db.setdefault(key, default)
 
     def _get_or_create_memory_block(
-        self, name: str, size: int
+        self, name: str, size: int, initial: dict
     ) -> SharedMemory:
         try:
             return SharedMemory(name=name)
         except FileNotFoundError:
             shm = SharedMemory(name=name, create=True, size=size)
-            data = self._serializer.dumps({})
+            data = self._serializer.dumps(initial)
             shm.buf[: len(data)] = data
             return shm
 
