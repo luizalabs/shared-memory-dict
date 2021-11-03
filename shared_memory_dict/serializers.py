@@ -11,7 +11,7 @@ class SerializationError(ValueError):
 
 
 class DeserializationError(ValueError):
-    def __init__(self, data: dict) -> None:
+    def __init__(self, data: bytes) -> None:
         super().__init__(f"Failed to deserialize data: {data!r}")
 
 
