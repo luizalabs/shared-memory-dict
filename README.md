@@ -31,7 +31,8 @@ A very simple [shared memory](https://docs.python.org/3/library/multiprocessing.
 >>> del smd  # use of smd after call unlink() is unsupported
 ```
 
-> The arg `name` defines the location of the memory block, so if you want to share the memory between process use the same name
+> The arg `name` defines the location of the memory block, so if you want to share the memory between process use the same name.
+> The size (in bytes) occupied by the contents of the dictionary depends on the serialization used in storage. By default pickle is used.
 
 ## Installation
 Using `pip`:
