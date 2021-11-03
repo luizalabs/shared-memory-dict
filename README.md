@@ -57,7 +57,7 @@ class JSONSerializer:
         return json.dumps(obj).encode() + NULL_BYTE
 
     def loads(self, data: bytes) -> dict:
-        data = bytes(data).split(NULL_BYTE, 1)[0]
+        data = data.split(NULL_BYTE, 1)[0]
         return json.loads(data)
 
 ```
