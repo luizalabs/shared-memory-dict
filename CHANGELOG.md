@@ -1,7 +1,13 @@
 Changelog
 =========
 
-0.7.0 (2020-11-26)
+0.7.1 (2021-11-03)
+------------------
+- Initialize memory with empty dict avoiding logs
+- Call serialization with buffer instead of memoryview
+- Treat null bytes on JSON loads
+
+0.7.0 (2021-10-26)
 ------------------
 - Run CI on different python versions
 - Add support for python 3.10
