@@ -46,7 +46,7 @@ class TestPickleSerializer:
     ):
         assert pickle_serializer.dumps(dict_content) == bytes_content
 
-    def test_should_raise_desserialization_error_when_content_is_not_pickle(
+    def test_should_raise_deserialization_error_when_content_is_not_pickle(
         self, pickle_serializer, bytes_content_with_invalid_pickle
     ):
         with pytest.raises(
