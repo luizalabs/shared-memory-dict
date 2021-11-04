@@ -1,4 +1,5 @@
 # Shared Memory Dict
+
 A very simple [shared memory](https://docs.python.org/3/library/multiprocessing.shared_memory.html) dict implementation.
 
 **Requires**: Python >= 3.8
@@ -35,12 +36,15 @@ A very simple [shared memory](https://docs.python.org/3/library/multiprocessing.
 > The size (in bytes) occupied by the contents of the dictionary depends on the serialization used in storage. By default pickle is used.
 
 ## Installation
+
 Using `pip`:
+
 ```shell
 pip install shared-memory-dict
 ```
 
 ## Locks
+
 To use [multiprocessing.Lock](https://docs.python.org/3.8/library/multiprocessing.html#multiprocessing.Lock) on write operations of shared memory dict set environment variable `SHARED_MEMORY_USE_LOCK=1`.
 
 ## Serialization
@@ -49,24 +53,34 @@ We use [pickle](https://docs.python.org/3/library/pickle.html) as default to rea
 
 You can create a custom serializer by implementing the `dumps` and `loads` methods.
 
+Custom serializers should raise `SerializationError` if the serialization fails and `DeserializationError` if the deserialization fails. Both are defined in the `shared_memory_dict.serializers` module.
+
+An example of a JSON serializer extracted from serializers module:
+
 ```python
 NULL_BYTE: Final = b"\x00"
 
 
 class JSONSerializer:
     def dumps(self, obj: dict) -> bytes:
-        return json.dumps(obj).encode() + NULL_BYTE
+        try:
+            return json.dumps(obj).encode() + NULL_BYTE
+        except (ValueError, TypeError):
+            raise SerializationError(obj)
 
     def loads(self, data: bytes) -> dict:
         data = data.split(NULL_BYTE, 1)[0]
-        return json.loads(data)
+        try:
+            return json.loads(data)
+        except json.JSONDecodeError:
+            raise DeserializationError(data)
 
 ```
 
 Note: A null byte is used to separate the dictionary contents from the bytes that are in memory.
 
 To use the custom serializer you must set it when creating a new shared memory dict instance:
- 
+
 ```python
 >>> smd = SharedMemoryDict(name='tokens', size=1024, serializer=JSONSerializer())
 ```
@@ -77,8 +91,8 @@ The pickle module is not secure. Only unpickle data you trust.
 
 See more [here](https://docs.python.org/3/library/pickle.html).
 
-
 ## Django Cache Implementation
+
 There's a [Django Cache Implementation](https://docs.djangoproject.com/en/3.0/topics/cache/) with Shared Memory Dict:
 
 ```python
@@ -95,10 +109,11 @@ CACHES = {
 **Install with**: `pip install "shared-memory-dict[django]"`
 
 ### Caveat
+
 With Django cache implementation the keys only expire when they're read. Be careful with memory usage
 
-
 ## AioCache Backend
+
 There's also a [AioCache Backend Implementation](https://aiocache.readthedocs.io/en/latest/caches.html) with Shared Memory Dict:
 
 ```python

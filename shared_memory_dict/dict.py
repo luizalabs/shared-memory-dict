@@ -172,11 +172,7 @@ class SharedMemoryDict:
             raise ValueError("exceeds available storage") from exc
 
     def _read_memory(self) -> Dict[str, Any]:
-        try:
-            return self._serializer.loads(self._memory_block.buf.tobytes())
-        except Exception as exc:
-            logger.warning(f"Fail to load data: {exc!r}")
-            return {}
+        return self._serializer.loads(self._memory_block.buf.tobytes())
 
     @property
     def shm(self) -> SharedMemory:

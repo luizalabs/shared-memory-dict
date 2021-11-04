@@ -1,4 +1,3 @@
-import logging
 import sys
 
 import pytest
@@ -192,14 +191,16 @@ class TestSharedMemoryDict:
     ):
         with pytest.raises(ValueError, match="exceeds available storage"):
             shared_memory_dict[key] = big_value
-    
+
     def test_should_expose_shared_memory(self, shared_memory_dict):
         try:
             shared_memory_dict.shm
         except AttributeError:
             pytest.fail('Should expose shared memory')
 
-    def test_shared_memory_attribute_should_be_read_only(self, shared_memory_dict):
+    def test_shared_memory_attribute_should_be_read_only(
+        self, shared_memory_dict
+    ):
         with pytest.raises(AttributeError):
             shared_memory_dict.shm = 'test'
 
@@ -214,11 +215,3 @@ class TestSharedMemoryDict:
             name='unit-tests', size=64, serializer=serializer
         )
         assert smd._serializer is serializer
-
-    def test_should_log_when_failed_to_load_shared_memory_content(self, shared_memory_dict, key, value, caplog):
-        smd = SharedMemoryDict(
-            name='ut', size=DEFAULT_MEMORY_SIZE, serializer=JSONSerializer()
-        )
-        with caplog.at_level(logging.WARNING):
-            smd[key] = value
-            assert "Fail to load data:" in caplog.text
