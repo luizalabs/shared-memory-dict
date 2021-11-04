@@ -69,8 +69,8 @@ class JSONSerializer:
             raise SerializationError(obj)
 
     def loads(self, data: bytes) -> dict:
+        data = data.split(NULL_BYTE, 1)[0]
         try:
-            data = data.split(NULL_BYTE, 1)[0]
             return json.loads(data)
         except json.JSONDecodeError:
             raise DeserializationError(data)
