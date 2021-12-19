@@ -77,10 +77,7 @@ class SharedMemoryDict:
         self._save_memory(db)
 
     def __getitem__(self, key: str) -> Any:
-        if  self.__contains__(key):
-            return self._read_memory()[key]
-        else:
-            return None
+        return self._read_memory()[key]
 
     def __setitem__(self, key: str, value: Any) -> None:
         with self._modify_db() as db:
@@ -131,7 +128,10 @@ class SharedMemoryDict:
         return repr(self._read_memory())
 
     def get(self, key: str, default: Optional[Any] = None) -> Any:
-        return self._read_memory().get(key, default)
+        if self.__contains__(key):
+            return self._read_memory().get(key, default)
+        else:
+            return default
 
     def keys(self) -> KeysView[Any]:
         return self._read_memory().keys()
@@ -175,7 +175,11 @@ class SharedMemoryDict:
             raise ValueError("exceeds available storage") from exc
 
     def _read_memory(self) -> Dict[str, Any]:
-        return self._serializer.loads(self._memory_block.buf.tobytes())
+        try:
+            return self._serializer.loads(self._memory_block.buf.tobytes())
+        except Exception as exc:
+            logger.warning(f"Fail to load data: {exc!r}")
+            return {}
 
     @property
     def shm(self) -> SharedMemory:
