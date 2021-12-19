@@ -128,7 +128,10 @@ class SharedMemoryDict:
         return repr(self._read_memory())
 
     def get(self, key: str, default: Optional[Any] = None) -> Any:
-        return self._read_memory().get(key, default)
+        if self.__contains__(key):
+            return self._read_memory().get(key, default)
+        else:
+            return default
 
     def keys(self) -> KeysView[Any]:
         return self._read_memory().keys()
