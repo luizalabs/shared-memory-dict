@@ -77,7 +77,10 @@ class SharedMemoryDict:
         self._save_memory(db)
 
     def __getitem__(self, key: str) -> Any:
-        return self._read_memory()[key]
+        if  self.__contains__(key):
+            return self._read_memory()[key]
+        else:
+            return None
 
     def __setitem__(self, key: str, value: Any) -> None:
         with self._modify_db() as db:
