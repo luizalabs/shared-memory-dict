@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.7.2 (2022-01-12)
+------------------
+- Fix incorrect initialization through hook
+
 0.7.1 (2021-11-03)
 ------------------
 - Initialize memory with empty dict avoiding logs
