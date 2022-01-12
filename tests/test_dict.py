@@ -5,6 +5,7 @@ import pytest
 from shared_memory_dict import SharedMemoryDict
 from shared_memory_dict.dict import DEFAULT_SERIALIZER
 from shared_memory_dict.serializers import JSONSerializer
+from multiprocessing.shared_memory import SharedMemory
 
 DEFAULT_MEMORY_SIZE = 1024
 
@@ -16,6 +17,7 @@ class TestSharedMemoryDict:
         yield smd
         smd.clear()
         smd.cleanup()
+        smd.shm.unlink()
 
     @pytest.fixture
     def key(self):
@@ -215,3 +217,14 @@ class TestSharedMemoryDict:
             name='unit-tests', size=64, serializer=serializer
         )
         assert smd._serializer is serializer
+
+    def test_shoud_initialize_when_memory_is_empty(self):
+        SharedMemory(name='sm_ut', create=True, size=64)
+        smd = SharedMemoryDict(name='ut', size=64)
+        try:
+            print(smd)
+        except Exception as e:
+            pytest.fail(f'Its should not raises: {e}')
+        smd.clear()
+        smd.cleanup()
+        smd.shm.unlink()

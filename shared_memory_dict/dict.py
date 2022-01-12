@@ -15,7 +15,11 @@ from typing import (
 )
 
 from .lock import lock
-from .serializers import PickleSerializer, SharedMemoryDictSerializer
+from .serializers import (
+    NULL_BYTE,
+    PickleSerializer,
+    SharedMemoryDictSerializer,
+)
 from .templates import MEMORY_NAME
 
 NOT_GIVEN = object()
@@ -38,6 +42,14 @@ class SharedMemoryDict:
         self._memory_block = self._get_or_create_memory_block(
             MEMORY_NAME.format(name=name), size
         )
+        self._ensure_memory_initialization()
+
+    def _ensure_memory_initialization(self):
+        memory_is_empty = (
+            bytes(self._memory_block.buf).split(NULL_BYTE, 1)[0] == b''
+        )
+        if memory_is_empty:
+            self._save_memory({})
 
     def cleanup(self) -> None:
         if not hasattr(self, '_memory_block'):
@@ -159,10 +171,7 @@ class SharedMemoryDict:
         try:
             return SharedMemory(name=name)
         except FileNotFoundError:
-            shm = SharedMemory(name=name, create=True, size=size)
-            data = self._serializer.dumps({})
-            shm.buf[: len(data)] = data
-            return shm
+            return SharedMemory(name=name, create=True, size=size)
 
     def _save_memory(self, db: Dict[str, Any]) -> None:
         data = self._serializer.dumps(db)
