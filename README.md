@@ -62,19 +62,22 @@ NULL_BYTE: Final = b"\x00"
 
 
 class JSONSerializer:
+
+    encoder = json.JSONEncoder
+    decoder = json.JSONDecoder
+
     def dumps(self, obj: dict) -> bytes:
         try:
-            return json.dumps(obj).encode() + NULL_BYTE
+            return json.dumps(obj, cls=self.encoder).encode() + NULL_BYTE
         except (ValueError, TypeError):
             raise SerializationError(obj)
 
     def loads(self, data: bytes) -> dict:
         data = data.split(NULL_BYTE, 1)[0]
         try:
-            return json.loads(data)
+            return json.loads(data, cls=self.decoder)
         except json.JSONDecodeError:
             raise DeserializationError(data)
-
 ```
 
 Note: A null byte is used to separate the dictionary contents from the bytes that are in memory.
