@@ -156,3 +156,8 @@ class SharedMemoryCache(BaseCache):
 
     def _loop(self) -> AbstractEventLoop:
         return asyncio.get_event_loop()
+
+    async def _close(self, *args, **kwargs) -> None:
+        self._cache.clear()
+        self._cache.cleanup()
+        self._cache.shm.unlink()

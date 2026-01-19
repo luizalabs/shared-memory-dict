@@ -126,3 +126,10 @@ class TestAioCache:
     async def test_should_expire_a_key(self, backend, key, value):
         await backend.set(key, value, ttl=1)
         assert await backend.expire(key, ttl=2) is True
+
+    async def test_should_close_cache(self):
+        cache = SharedMemoryCache(name='close-prefix', size=1024)
+        assert await cache.set('inserting', 1) == 1
+        await cache.close()
+        with pytest.raises(AttributeError):
+            await cache.set('inserting', 1) == 1
